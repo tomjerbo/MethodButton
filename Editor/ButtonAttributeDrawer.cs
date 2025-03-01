@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Jerbo.Inspector
 {
     [CustomEditor(typeof(MonoBehaviour), true)]
-    public class ButtonAttributeDrawer : UnityEditor.Editor
+    public class ButtonAttributeDrawer : Editor
     {
         BindingFlags BINDING_FLAGS = BindingFlags.Default | 
                                      BindingFlags.Instance | 
@@ -17,8 +17,9 @@ namespace Jerbo.Inspector
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-
             MonoBehaviour mono = (MonoBehaviour)target;
+            if (mono == null) return;
+
             MethodInfo[] methods = mono.GetType().GetMethods(BINDING_FLAGS);
             
             foreach (MethodInfo method in methods)
@@ -28,7 +29,8 @@ namespace Jerbo.Inspector
                 
                 string displayText = buttonAttribute.displayText;
                 if (string.IsNullOrEmpty(displayText)) displayText = method.Name;
-                
+
+                GUILayout.Space(4);
                 if (GUILayout.Button(displayText, GUILayout.Height((float)buttonAttribute.buttonSize)))
                 {
                     method.Invoke(mono, null);
